@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://dnm.nflximg.net/api/v6/BvVbc2Wxr2w6QuoANoSpJKEIWjQ/AAAAQV3Q_j9k85gREY9y4TWBcBml5acbUo1R7Hy95OK54HaDGwWQ2UkipVfrs4yFSQki3FuGbaVZx_Lrf_b0kpuRF80hMbLZjLXS-mnelrISvhyk6EjZVuT-j6swGApIPkxoO_mY21P0_A70rCrLUC8SbB0XwPE.jpg?r=ed9');
+            background-size: cover;
+            background-repeat: no-repeat;
+            height: 125vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #f1f1f1; /* Light font color */
+            text-align: center;
+        }
+        .container {
+        display: flex;
+        align-items: flex-start;
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 15px;
+        padding: 25px;
+        width: 70%;
+        max-width: 800px;
+        position: relative;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        margin-top: 70px; /* Adjust the margin-top value as needed */
+    }
+        .search-area {
+            flex: 1; /* Take remaining space */
+            padding-right: 20px;
+            text-align: left;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        label, input, button {
+            display: block;
+            width: 90%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8); /* Adjust opacity for better readability */
+            color: #333;
+            font-size: 1rem; /* Adjust font size */
+            font-weight: bold; /* Bold font */
+            outline: none; /* Remove focus outline */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+        }
+        button {
+            cursor: pointer;
+            background-color: #69aee2;
+            color: #fff;
+            transition: background-color 0.3s ease; /* Add transition effect */
+        }
+
+        button:hover {
+            background-color: #72b3f9;
+        }
+
+        #output {
+            background-color: rgba(51, 49, 49, 0.8); /* Adjust opacity for better readability */
+            border-radius: 10px;
+            padding: 15px;
+            font-weight: bold;
+            color: #f5f2f2; /* Change color to black for better visibility */
+            flex: 1; /* Take remaining space */
+            max-width: 40%;
+        }
+
+        #output a {
+            display: block;
+            margin-bottom: 10px;
+            color: #48047b; /* Change color to blue for links */
+            text-decoration: none; /* Remove default underline */
+            transition: color 0.3s ease; /* Add transition effect */
+        }
+
+        #output a:hover {
+            color: #6aaef7; /* Darker blue on hover */
+        }
+        .movie {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            max-width: 400px;
+            text-align: left;
+        }
+
+        .movie a {
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .movie p {
+            margin: 5px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-area">
+            <h1>Movie Recommendation</h1>
+            <form id="movieForm">
+                <label for="movieName">Enter a movie name:</label>
+                <input type="text" id="movieName" name="movieName" placeholder="E.g., Inception">
+                <button type="submit">Get Recommendations</button>
+            </form>
+        </div>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        document.getElementById("movieForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const movieName = document.getElementById("movieName").value;
+            fetch('/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `movie_name=${movieName}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                let output = "<h2>Recommended Movies</h2>";
+                data.forEach((movie, index) => {
+                    output += `<div class="movie">
+                                    <a href="https://www.google.com/search?q=${encodeURIComponent(movie.title)}" target="_blank">${index + 1}. ${movie.title}</a>
+                                    <p><strong>Genres:</strong> ${movie.genres}</p>
+                                    <p><strong>Actors:</strong> ${movie.actor_1_name} , ${movie.actor_2_name}</p>
+                                </div>`;
+                });
+                document.getElementById("output").innerHTML = output;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+    
